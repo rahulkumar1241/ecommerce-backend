@@ -547,6 +547,135 @@ const handleAddAdminOrDelivery = async (req, res) => {
         }
     }
 }
+const handleCreateCategory = async (req, res) => {
+    const categorySchema = Joi.object({
+        cat_name: Joi.string().required().messages({
+            'any.required': 'Category is required.',
+        })
+    });
+
+    const { cat_name } = req.body;
+
+    // Validate the data against the schema
+
+    let categoryData = {
+        cat_name: cat_name
+    }
+
+    const { error, value } = categorySchema.validate(categoryData);
+
+    if (error) {
+        res.status(400).json({
+            status: 400,
+            success: false,
+            message: error.details[0].message
+        })
+    } else {
+        try {
+            const [result] = await pool.execute(
+                `INSERT INTO ${process.env.DB_NAME}.categories (category_name) VALUES (?)`,
+                [cat_name]
+            );
+            res.status(200).json({ success: true, status: 200, message: 'Category added successfully' });
+        } catch (error) {
+            res.status(500).json({ success: false, message: "Internal server error" });
+        }
+    }
+}
+
+
+const handleGetCategoryInfo = async (req, res) => {
+    const categorySchema = Joi.object({
+        cat_id: Joi.number().integer().min(1).required().messages({
+            'number.base': 'Please provide Category Id',
+            'number.integer': 'Please provide a valid Category Id',
+            'any.required': 'Category Id is required',
+            'number.min': 'Category Id must be at least 1.',
+        }),
+    });
+
+    const { cat_id } = req.query;
+
+    // Validate the data against the schema
+
+    let categoryData = {
+        cat_id: cat_id
+    }
+
+    const { error, value } = categorySchema.validate(categoryData);
+
+    if (error) {
+        res.status(400).json({
+            status: 400,
+            success: false,
+            message: error.details[0].message
+        })
+    } else {
+        try {
+            const [result] = await pool.execute(`SELECT * FROM ${process.env.DB_NAME}.categories WHERE cat_id = '${cat_id}'`);
+            res.status(200).json({ success: true, data: result, status: 200, message: 'Data fetch successfully' });
+        } catch (error) {
+            res.status(500).json({ success: false, message: "Internal server error" });
+        }
+    }
+}
+
+const handleUpdateCategoryInfo = async (req, res) => {
+
+    const categorySchema = Joi.object({
+        cat_id: Joi.number().integer().min(1).required().messages({
+            'number.base': 'Please provide Category Id',
+            'number.integer': 'Please provide a valid Category Id',
+            'any.required': 'Category Id is required',
+            'number.min': 'Category Id must be at least 1.',
+        }),
+        banner_url: Joi.string()
+            .uri()
+            .optional()
+            .messages({
+                'string.uri': 'Banner URL must be a valid URL',
+            }),
+        banner_is_active: Joi.number()
+            .valid(0, 1)
+            .messages({
+                'number.base': 'Status must be a number',
+                'any.only': 'Banner status must be either 0 or 1'
+            })
+    });
+
+
+    let { cat_id, banner_url, banner_is_active } = req.body;
+
+    let categoryData = {
+        cat_id: cat_id,
+        banner_url: banner_url,
+        banner_is_active: banner_is_active
+    }
+
+    const { error, value } = categorySchema.validate(categoryData);
+
+    if (error) {
+        res.status(400).json({
+            status: 400,
+            success: false,
+            message: error.details[0].message
+        })
+    } else {
+
+
+        try {
+            await pool.execute(
+                `UPDATE ${process.env.DB_NAME}.categories SET
+        banner_url = '${banner_url}',
+        banner_is_active = '${banner_is_active}'
+        WHERE cat_id = ${cat_id}`);
+            res.status(200).json({ success: true, message: "Data updated successfully" });
+        } catch (err) {
+            res.status(500).json({ success: false, message: "Internal server error" });
+        }
+    }
+}
+
 
 
 module.exports = {
@@ -555,5 +684,8 @@ module.exports = {
     handleUploadProductSheet,
     handleGetAllOrderInfo,
     handleAdminDashboard,
-    handleAddAdminOrDelivery
+    handleAddAdminOrDelivery,
+    handleCreateCategory,
+    handleGetCategoryInfo,
+    handleUpdateCategoryInfo
 }
