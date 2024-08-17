@@ -231,7 +231,7 @@ const handleSignin = async (req, res) => {
                     delete userInfo['is_active'];
                     delete userInfo['otp'];
 
-                    const options = { expiresIn: '1d' };
+                    const options = { expiresIn: '1y' };
 
                     let accessToken = jwt.sign(payload, secret, options);
 
