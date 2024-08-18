@@ -632,8 +632,16 @@ const handleUpdateCategoryInfo = async (req, res) => {
         banner_url: Joi.string()
             .uri()
             .optional()
+            .allow("")
             .messages({
                 'string.uri': 'Banner URL must be a valid URL',
+            }),
+        redirect_url: Joi.string()
+            .uri()
+            .optional()
+            .allow("")
+            .messages({
+                'string.uri': 'Redirect URL must be a valid URL',
             }),
         banner_is_active: Joi.number()
             .valid(0, 1)
@@ -644,12 +652,13 @@ const handleUpdateCategoryInfo = async (req, res) => {
     });
 
 
-    let { cat_id, banner_url, banner_is_active } = req.body;
+    let { cat_id, banner_url, banner_is_active,redirect_url } = req.body;
 
     let categoryData = {
         cat_id: cat_id,
         banner_url: banner_url,
-        banner_is_active: banner_is_active
+        banner_is_active: banner_is_active,
+        redirect_url:redirect_url
     }
 
     const { error, value } = categorySchema.validate(categoryData);
@@ -667,7 +676,8 @@ const handleUpdateCategoryInfo = async (req, res) => {
             await pool.execute(
                 `UPDATE ${process.env.DB_NAME}.categories SET
         banner_url = '${banner_url}',
-        banner_is_active = '${banner_is_active}'
+        banner_is_active = '${banner_is_active}',
+        redirect_url = '${redirect_url}'
         WHERE cat_id = ${cat_id}`);
             res.status(200).json({ success: true, message: "Data updated successfully" });
         } catch (err) {
