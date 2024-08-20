@@ -176,6 +176,11 @@ const handleCreateOrUpdateProduct = async (req, res) => {
             'any.required': 'The value must be provided.',
             'any.only': 'The value must be a boolean.',
         }),
+        size_type: Joi.number().integer().min(0).messages({
+            'number.base': 'Please provide a valid Size type',
+            'number.integer': 'Please provide a valid Size type.',
+            'number.min': 'Size type must be positive.',
+        }),
         product_id: Joi.number().integer().min(1).optional().messages({
             'number.base': 'Please provide a valid Product Id',
             'number.integer': 'Please provide a valid Product Id.',
@@ -194,6 +199,7 @@ const handleCreateOrUpdateProduct = async (req, res) => {
         price,
         discount_per,
         price_after_discount,
+        size_type,
         is_active
     } = req.body;
 
@@ -207,6 +213,7 @@ const handleCreateOrUpdateProduct = async (req, res) => {
         price: price,
         discount_per: discount_per,
         price_after_discount: price_after_discount,
+        size_type:size_type,
         is_active: is_active
     };
 
@@ -232,6 +239,7 @@ const handleCreateOrUpdateProduct = async (req, res) => {
                     price='${price}',
                     discount_per='${discount_per}',
                     price_after_discount='${price_after_discount}',
+                    size_type = ${size_type},
                     is_active=${is_active}
                     WHERE product_id='${product_id}'
                     `);
