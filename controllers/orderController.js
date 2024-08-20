@@ -32,7 +32,8 @@ const handleCreateOrder = async (req, res) => {
             'number.integer': 'Please provide a valid product price.',
             'any.required': 'Product price is required.',
             'number.min': 'Product price must be at least 1.',
-        })
+        }),
+        size_info:Joi.string().allow(null,'')
     })
 
     const orderSchema = Joi.object({
@@ -78,8 +79,8 @@ const handleCreateOrder = async (req, res) => {
             ///////////loop through products to create order_items/////////////
             for (let i = 0; i < products.length; ++i) {
                 const [orderItemsResult] = await pool.execute(
-                    `INSERT INTO ${process.env.DB_NAME}.order_items (user_id,order_id,product_id, quantity ,buyout_price,total) VALUES (?, ?, ?, ?, ?, ?)`,
-                    [decoded.user_id, result.insertId, products[i].product_id, products[i].quantity, products[i].buyout_price, products[i].quantity * products[i].buyout_price]
+                    `INSERT INTO ${process.env.DB_NAME}.order_items (user_id,order_id,product_id, quantity ,buyout_price,total,size_info) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                    [decoded.user_id, result.insertId, products[i].product_id, products[i].quantity, products[i].buyout_price, products[i].quantity * products[i].buyout_price,products[i].size_info]
                 );
             }
 
