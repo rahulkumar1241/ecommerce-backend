@@ -247,8 +247,8 @@ const handleCreateOrUpdateProduct = async (req, res) => {
             }
             else {
                 await pool.execute(
-                    `INSERT INTO ${process.env.DB_NAME}.products (product_name,product_description, rating ,stock,category,created_at,photo_url,discount_per,is_active,price,price_after_discount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                    [product_name, product_description, rating, stock, category, moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), photo_url, discount_per, is_active, price, price_after_discount]
+                    `INSERT INTO ${process.env.DB_NAME}.products (product_name,product_description, rating ,stock,category,created_at,photo_url,discount_per,is_active,price,price_after_discount,size_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [product_name, product_description, rating, stock, category, moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), photo_url, discount_per, is_active, price, price_after_discount,size_type]
                 );
                 res.status(200).json({ status: 200, message: "Product Created Successfully", success: true })
             }
