@@ -23,7 +23,7 @@ const handleMainPage = async (req, res) => {
 
         for (let i = 0; i < rows.length; ++i) {
 
-            let query = `SELECT SQL_CALC_FOUND_ROWS * FROM ${process.env.DB_NAME}.products where category='${rows[i].cat_id}' LIMIT ${LIMIT}`;
+            let query = `SELECT SQL_CALC_FOUND_ROWS * FROM ${process.env.DB_NAME}.products where category='${rows[i].cat_id}' AND is_active = '1' LIMIT ${LIMIT}`;
             let totalCountQuery = `SELECT FOUND_ROWS() as total`;
             const [categoryProductData] = await pool.execute(query);
             const [totalCategoryProduct] = await pool.execute(totalCountQuery);
