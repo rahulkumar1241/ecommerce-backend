@@ -432,7 +432,7 @@ const handleSendOtpOrder = async (req, res) => {
             let body = `Dear Customer,${otp} is your OTP for order request.DO NOT share it with anyone.\nTeam ${process.env.PRODUCT_NAME}`;
             let response = await sendOtpOnMobile(body, mobile_number,country_code);
         } catch (error) {
-            res.status(500).json({ success: false, message: "Error while sending OTP.Please try after some time." });
+            res.status(500).json({ success: false, message: error.message });
         }
 
         try {
